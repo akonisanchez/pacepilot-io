@@ -133,39 +133,84 @@ function generatePlan(formData) {
   }
 
   /*
-    We distribute the remaining miles across all non-long runs.
+    This distribute the remaining miles across non-long runs using weights.
 
-    Instead of rounding an equal split for every run, we:
-    1. assign a base mileage using Math.floor()
-    2. calculate leftover miles
-    3. add one leftover mile to the first few runs
-
-    This guarantees that the total weekly mileage matches
-    the user's requested mileage exactly.
+    Assign a weight to each non-long run.
+    Then calculate each run's share of the remaining mileage.
+    Then distribute leftover miles one at a time so the
+    weekly total still matches exactly.
   */
   const nonLongRuns = plan.filter((run) => run.type !== 'Long Run');
-  const baseMiles =
-    nonLongRuns.length > 0 ? Math.floor(remainingMiles / nonLongRuns.length) : 0;
-  let leftoverMiles =
-    nonLongRuns.length > 0 ? remainingMiles % nonLongRuns.length : 0;
+  const weightedRuns = nonLongRuns.map((run) => ({
+    ...run,
+    weight: getRunWeight(run.type),
+  }));
 
-  const completedPlan = plan.map((run) => {
-    if (run.type === 'Long Run') {
-      return run;
-    }
+  const totalWeight = weightedRuns.reduce(
+    (sum, run) => sum + run.weight,
+    0
+  );
 
-    let assignedMiles = baseMiles;
+  let assignedMilesTotal = 0;
 
-    if (leftoverMiles > 0) {
-      assignedMiles += 1;
-      leftoverMiles -= 1;
-    }
+  const runsWithBaseMiles = weightedRuns.map((run) => {
+    const exactMiles = totalWeight > 0
+      ? (remainingMiles * run.weight) / totalWeight
+      : 0;
+
+    const baseMiles = Math.floor(exactMiles);
+    assignedMilesTotal += baseMiles;
 
     return {
       ...run,
-      miles: assignedMiles,
+      miles: baseMiles,
+      exactMiles,
     };
   });
+
+  let leftoverMiles = remainingMiles - assignedMilesTotal;
+
+  /*
+    Give leftover miles to the runs with the largest decimal remainder first.
+    This keeps the final output closer to the intended weighted split.
+  */
+  const runsSortedByRemainder = [...runsWithBaseMiles].sort(
+    (a, b) => (b.exactMiles - b.miles) - (a.exactMiles - a.miles)
+  );
+
+  for (let i = 0; i < leftoverMiles; i += 1) {
+    runsSortedByRemainder[i].miles += 1;
+  }
+
+  /*
+    Rebuild the original plan order and remove helper-only fields
+    like weight and exactMiles before returning the final plan.
+  */
+  const finalizedNonLongRuns = runsWithBaseMiles.map((run) => {
+    const updatedRun = runsSortedByRemainder.find(
+      (sortedRun) =>
+        sortedRun.type === run.type &&
+        sortedRun.notes === run.notes
+    );
+
+    return {
+      type: updatedRun.type,
+      miles: updatedRun.miles,
+      notes: updatedRun.notes,
+    };
+  });
+
+  const completedPlan = [];
+  let nonLongRunIndex = 0;
+
+  for (const run of plan) {
+    if (run.type === 'Long Run') {
+      completedPlan.push(run);
+    } else {
+      completedPlan.push(finalizedNonLongRuns[nonLongRunIndex]);
+      nonLongRunIndex += 1;
+    }
+  }
 
   return completedPlan;
 }
@@ -184,6 +229,22 @@ function getWorkoutNote(goal, experienceLevel) {
   }
 
   return 'Keep this moderate and focus on consistency.';
+}
+
+function getRunWeight(runType) {
+  if (runType === 'Workout Run') {
+    return 1.2;
+  }
+
+  if (runType === 'Recovery Run') {
+    return 0.7;
+  }
+
+  if (runType === 'Easy Run') {
+    return 1;
+  }
+
+  return 1;
 }
 
 export default generatePlan;

@@ -1,15 +1,21 @@
 import { useState } from 'react';
 import PlanForm from './components/PlanForm';
+import generatePlan from './utils/generatePlan';
 
 function App() {
   const [submittedPlanData, setSubmittedPlanData] = useState(null);
+  const [generatedPlan, setGeneratedPlan] = useState([]);
 
   /*
-    This function receives the completed form data
-    from PlanForm and stores it in App state.
+    This function receives the form data,
+    stores it for reference,
+    and creates a generated training plan.
   */
   function handleGeneratePlan(formData) {
     setSubmittedPlanData(formData);
+
+    const newPlan = generatePlan(formData);
+    setGeneratedPlan(newPlan);
   }
 
   return (
@@ -23,26 +29,15 @@ function App() {
 
       {submittedPlanData && (
         <section className="results-card">
-          <h2>Submitted Plan Preferences</h2>
+          <h2>Your Weekly Plan</h2>
           <ul>
-            <li>
-              <strong>Current weekly mileage:</strong>{' '}
-              {submittedPlanData.weeklyMileage}
-            </li>
-            <li>
-              <strong>Preferred run days:</strong> {submittedPlanData.runDays}
-            </li>
-            <li>
-              <strong>Experience level:</strong>{' '}
-              {submittedPlanData.experienceLevel}
-            </li>
-            <li>
-              <strong>Training goal:</strong> {submittedPlanData.goal}
-            </li>
-            <li>
-              <strong>Long run preference:</strong>{' '}
-              {submittedPlanData.longRunPreference}
-            </li>
+            {generatedPlan.map((run, index) => (
+              <li key={`${run.type}-${index}`}>
+                <strong>{run.type}:</strong> {run.miles} miles
+                <br />
+                <span>{run.notes}</span>
+              </li>
+            ))}
           </ul>
         </section>
       )}

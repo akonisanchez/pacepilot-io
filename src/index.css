@@ -33,3 +33,64 @@ body {
   font-size: 1rem;
   line-height: 1.5;
 }
+
+.form-card,
+.results-card {
+  max-width: 700px;
+  margin: 1.5rem auto 0;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.form-card h2,
+.results-card h2 {
+  margin-bottom: 1rem;
+}
+
+.plan-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.plan-form label {
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+.plan-form input,
+.plan-form select,
+.plan-form button {
+  font: inherit;
+  padding: 0.75rem;
+  border-radius: 8px;
+}
+
+.plan-form input,
+.plan-form select {
+  border: 1px solid #d1d5db;
+}
+
+.plan-form button {
+  margin-top: 1rem;
+  border: none;
+  background-color: #111827;
+  color: white;
+  cursor: pointer;
+}
+
+.plan-form button:hover {
+  opacity: 0.92;
+}
+
+.results-card ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.results-card li {
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+}

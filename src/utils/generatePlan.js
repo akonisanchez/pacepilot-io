@@ -1,3 +1,5 @@
+import WORKOUT_LIBRARY from '../data/workoutLibrary';
+
 /*
   generatePlan takes the user's form inputs
   and returns a flexible weekly running plan.
@@ -212,8 +214,12 @@ function generatePlan(formData) {
     }
   }
 
-  return completedPlan;
-}
+  const decoratedPlan = completedPlan.map((run) =>
+    decorateRunDetails(run, formData)
+  );
+
+  return decoratedPlan;
+  }
 
 function getWorkoutNote(goal, experienceLevel) {
   if (goal === 'get-faster' && experienceLevel === 'intermediate') {
@@ -245,6 +251,120 @@ function getRunWeight(runType) {
   }
 
   return 1;
+}
+
+function decorateRunDetails(run, formData) {
+  if (run.type === 'Workout Run') {
+    return decorateRunWithWorkout(run, formData);
+  }
+
+  if (run.type === 'Recovery Run') {
+    return decorateRecoveryRun(run);
+  }
+
+  if (run.type === 'Easy Run') {
+    return decorateEasyRun(run);
+  }
+
+  return run;
+}
+
+function decorateRunWithWorkout(run, formData) {
+  if (shouldConvertWorkoutToSteady(formData, run)) {
+    return {
+      ...run,
+      type: 'Steady Run',
+      notes: 'Controlled aerobic effort. Keep this comfortably hard, not all out.',
+      workoutLabel: null,
+    };
+  }
+
+  const matchingWorkouts = getMatchingWorkouts(formData, run.miles);
+
+  if (matchingWorkouts.length === 0) {
+    return {
+      ...run,
+      type: 'Steady Run',
+      notes: 'Controlled aerobic effort. Keep this comfortably hard, not all out.',
+      workoutLabel: null,
+    };
+  }
+
+  const selectedWorkout = selectBestWorkout(matchingWorkouts, run.miles);
+
+  return {
+    ...run,
+    workoutLabel: selectedWorkout.label,
+    notes: formatWorkoutDescription(selectedWorkout, run.miles),
+  };
+}
+
+function shouldConvertWorkoutToSteady(formData, run) {
+  const weeklyMileage = Number(formData.weeklyMileage);
+  const experienceLevel = formData.experienceLevel;
+
+  if (experienceLevel === 'beginner' && weeklyMileage < 15) {
+    return true;
+  }
+
+  if (run.miles < 4) {
+    return true;
+  }
+
+  return false;
+}
+
+function decorateRecoveryRun(run) {
+  if (run.miles < 3) {
+    return {
+      ...run,
+      type: 'Optional Recovery Run',
+      notes: 'Optional short recovery jog. Skip if you need extra rest.',
+    };
+  }
+
+  return run;
+}
+
+function decorateEasyRun(run) {
+  if (run.miles < 3) {
+    return {
+      ...run,
+      type: 'Optional Easy Run',
+      notes: 'Optional easy effort. Skip or replace with walking if needed.',
+    };
+  }
+
+  return run;
+}
+
+function getMatchingWorkouts(formData, runMiles) {
+  const weeklyMileage = Number(formData.weeklyMileage);
+  const { goal, experienceLevel } = formData;
+
+  return WORKOUT_LIBRARY.filter((workout) => {
+    return (
+      workout.goal === goal &&
+      workout.experienceLevels.includes(experienceLevel) &&
+      weeklyMileage >= workout.minWeeklyMileage &&
+      runMiles >= workout.minRunMiles
+    );
+  });
+}
+
+function selectBestWorkout(workouts, runMiles) {
+  return workouts.reduce((bestWorkout, currentWorkout) => {
+    const bestDifference = Math.abs(bestWorkout.preferredRunMiles - runMiles);
+    const currentDifference = Math.abs(currentWorkout.preferredRunMiles - runMiles);
+
+    return currentDifference < bestDifference ? currentWorkout : bestWorkout;
+  });
+}
+
+function formatWorkoutDescription(workout, runMiles) {
+  const { warmupMiles, mainSet, cooldownMiles } = workout.segments;
+
+  return `Warm up ${warmupMiles} miles easy, then ${mainSet}, cool down ${cooldownMiles} miles easy. Total: about ${runMiles} miles.`;
 }
 
 export default generatePlan;

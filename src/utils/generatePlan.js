@@ -362,9 +362,27 @@ function selectBestWorkout(workouts, runMiles) {
 }
 
 function formatWorkoutDescription(workout, runMiles) {
-  const { warmupMiles, mainSet, cooldownMiles } = workout.segments;
+  const scaledWarmupMiles = getScaledWarmupMiles(runMiles);
+  const scaledCooldownMiles = getScaledCooldownMiles(runMiles);
+  const { mainSet } = workout.segments;
 
-  return `Warm up ${warmupMiles} miles easy, then ${mainSet}, cool down ${cooldownMiles} miles easy. Total: about ${runMiles} miles.`;
+  return `Warm up ${scaledWarmupMiles} miles easy, then ${mainSet}, cool down ${scaledCooldownMiles} miles easy. Total: about ${runMiles} miles.`;
+}
+
+function getScaledWarmupMiles(runMiles) {
+  if (runMiles >= 6) {
+    return 2;
+  }
+
+  return 1;
+}
+
+function getScaledCooldownMiles(runMiles) {
+  if (runMiles >= 6) {
+    return 2;
+  }
+
+  return 1;
 }
 
 export default generatePlan;

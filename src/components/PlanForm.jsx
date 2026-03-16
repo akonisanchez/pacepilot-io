@@ -57,6 +57,10 @@ function PlanForm({ onGeneratePlan }) {
           onChange={handleChange}
           required
         />
+        <p className="field-help-text">
+        PacePilot currently works best for beginner and intermediate recreational
+        runners between 8 and 45 weekly miles.
+        </p>
 
         <label htmlFor="runDays">Preferred run days per week</label>
         <select

@@ -179,3 +179,23 @@ body {
   font-size: 0.95rem;
   color: #374151;
 }
+
+.field-help-text {
+  margin-top: -0.25rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #6b7280;
+}
+
+.generation-message {
+  line-height: 1.5;
+  color: #374151;
+}
+
+.workout-label {
+  display: inline-block;
+  margin-top: 0.35rem;
+  font-weight: 600;
+  color: #111827;
+}

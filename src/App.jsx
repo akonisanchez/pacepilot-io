@@ -2,10 +2,14 @@ import { useEffect, useState } from 'react';
 import PlanForm from './components/PlanForm';
 import generatePlan from './utils/generatePlan';
 
+const MIN_SUPPORTED_MILEAGE = 8;
+const MAX_SUPPORTED_MILEAGE = 45;
+
 function App() {
   const [submittedPlanData, setSubmittedPlanData] = useState(null);
   const [generatedPlan, setGeneratedPlan] = useState([]);
   const [saveMessage, setSaveMessage] = useState('');
+  const [generationMessage, setGenerationMessage] = useState('');
 
   /*
     Initialize savedPlans from localStorage one time
@@ -30,21 +34,35 @@ function App() {
   }, [savedPlans]);
 
   /*
-    This function receives the form data,
-    stores it for reference,
-    and creates a generated training plan.
+    Generate a plan only if the user's mileage is within
+    the supported recreational range for PacePilot.
   */
   function handleGeneratePlan(formData) {
+    const weeklyMileage = Number(formData.weeklyMileage);
+
     setSubmittedPlanData(formData);
+    setSaveMessage('');
+
+    if (weeklyMileage > MAX_SUPPORTED_MILEAGE) {
+      setGeneratedPlan([]);
+      setGenerationMessage(
+        `PacePilot is currently designed for beginner and intermediate recreational runners between ${MIN_SUPPORTED_MILEAGE} and ${MAX_SUPPORTED_MILEAGE} weekly miles. Please enter a lower mileage to generate a plan.`
+      );
+      return;
+    }
+
+    if (weeklyMileage < MIN_SUPPORTED_MILEAGE) {
+      setGeneratedPlan([]);
+      setGenerationMessage(
+        `PacePilot currently works best between ${MIN_SUPPORTED_MILEAGE} and ${MAX_SUPPORTED_MILEAGE} weekly miles. Please enter at least ${MIN_SUPPORTED_MILEAGE} weekly miles to generate a plan.`
+      );
+      return;
+    }
+
+    setGenerationMessage('');
 
     const newPlan = generatePlan(formData);
     setGeneratedPlan(newPlan);
-
-    /*
-      Clear any old save message when a new plan is generated.
-      This keeps feedback relevant to the current plan on screen.
-    */
-    setSaveMessage('');
   }
 
   /*
@@ -103,6 +121,13 @@ function App() {
 
       <PlanForm onGeneratePlan={handleGeneratePlan} />
 
+      {generationMessage && (
+        <section className="results-card">
+          <h2>Plan Guidance</h2>
+          <p className="generation-message">{generationMessage}</p>
+        </section>
+      )}
+
       {generatedPlan.length > 0 && (
         <section className="results-card">
           <h2>Your Weekly Plan</h2>
@@ -111,6 +136,12 @@ function App() {
             {generatedPlan.map((run, index) => (
               <li key={`${run.type}-${index}`}>
                 <strong>{run.type}:</strong> {run.miles} miles
+                {run.workoutLabel && (
+                  <>
+                    <br />
+                    <span className="workout-label">{run.workoutLabel}</span>
+                  </>
+                )}
                 <br />
                 <span>{run.notes}</span>
               </li>
@@ -149,6 +180,12 @@ function App() {
                 {plan.runs.map((run, index) => (
                   <li key={`${plan.id}-${run.type}-${index}`}>
                     <strong>{run.type}:</strong> {run.miles} miles
+                    {run.workoutLabel && (
+                      <>
+                        <br />
+                        <span className="workout-label">{run.workoutLabel}</span>
+                      </>
+                    )}
                     <br />
                     <span>{run.notes}</span>
                   </li>

@@ -103,3 +103,73 @@ body {
   margin-top: 0.35rem;
   color: #4b5563;
 }
+
+.save-button,
+.delete-button {
+  font: inherit;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.save-button {
+  margin-top: 1rem;
+  background-color: #111827;
+  color: white;
+}
+
+.save-button:hover,
+.delete-button:hover {
+  opacity: 0.92;
+}
+
+.saved-plans-card {
+  max-width: 700px;
+  margin: 1.5rem auto 0;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.saved-plans-card h2 {
+  margin-bottom: 1rem;
+}
+
+.saved-plan-item {
+  padding: 1rem 0;
+  border-top: 1px solid #e5e7eb;
+}
+
+.saved-plan-item:first-of-type {
+  border-top: none;
+  padding-top: 0;
+}
+
+.saved-plan-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.saved-plan-header h3 {
+  font-size: 1rem;
+}
+
+.delete-button {
+  background-color: #e5e7eb;
+  color: #111827;
+}
+
+.saved-plan-item ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.saved-plan-item li {
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+}

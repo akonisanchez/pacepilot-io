@@ -5,6 +5,7 @@ import generatePlan from './utils/generatePlan';
 function App() {
   const [submittedPlanData, setSubmittedPlanData] = useState(null);
   const [generatedPlan, setGeneratedPlan] = useState([]);
+  const [saveMessage, setSaveMessage] = useState('');
 
   /*
     Initialize savedPlans from localStorage one time
@@ -38,6 +39,12 @@ function App() {
 
     const newPlan = generatePlan(formData);
     setGeneratedPlan(newPlan);
+
+    /*
+      Clear any old save message when a new plan is generated.
+      This keeps feedback relevant to the current plan on screen.
+    */
+    setSaveMessage('');
   }
 
   /*
@@ -49,6 +56,25 @@ function App() {
       return;
     }
 
+    const currentPlanSignature = JSON.stringify({
+      inputs: submittedPlanData,
+      runs: generatedPlan,
+    });
+
+    const isDuplicatePlan = savedPlans.some((plan) => {
+      const savedPlanSignature = JSON.stringify({
+        inputs: plan.inputs,
+        runs: plan.runs,
+      });
+
+      return savedPlanSignature === currentPlanSignature;
+    });
+
+    if (isDuplicatePlan) {
+      setSaveMessage('This plan is already saved.');
+      return;
+    }
+
     const newSavedPlan = {
       id: crypto.randomUUID(),
       inputs: submittedPlanData,
@@ -56,6 +82,7 @@ function App() {
     };
 
     setSavedPlans((previousSavedPlans) => [newSavedPlan, ...previousSavedPlans]);
+    setSaveMessage('Plan saved successfully.');
   }
 
   /*
@@ -93,6 +120,8 @@ function App() {
           <button className="save-button" onClick={handleSavePlan}>
             Save Plan
           </button>
+
+          {saveMessage && <p className="save-message">{saveMessage}</p>}
         </section>
       )}
 

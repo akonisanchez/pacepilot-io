@@ -115,8 +115,21 @@ function App() {
   return (
     <main className="app">
       <header className="hero">
+        <div className="hero-badge-row">
+          <span className="hero-badge">Beginner to intermediate</span>
+          <span className="hero-badge">8 to 45 weekly miles</span>
+          <span className="hero-badge">Recreational runners</span>
+        </div>
+
         <h1>PacePilot.io</h1>
-        <p>Your flexible weekly running plan generator.</p>
+
+        <p className="hero-subtitle">
+          Flexible weekly running plans for beginner and intermediate recreational runners.
+        </p>
+
+        <p className="hero-description">
+          Build consistency, improve endurance, and add simple speed work without overcomplicating your week.
+        </p>
       </header>
 
       <PlanForm onGeneratePlan={handleGeneratePlan} />

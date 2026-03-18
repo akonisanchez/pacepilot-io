@@ -10,9 +10,10 @@ PacePilot is best designed for runners training between 8 and 45 miles per week.
 
 ## Visit deployed app below!
 
-[https://pacepilot-io.onrender.com/]  
+https://pacepilot-io.onrender.com/  
 
-Walkthrough video: [https://youtu.be/Yma74Jno97U]
+### Walkthrough video:
+[![Walthrough](https://img.youtube.com/vi/Yma74Jno97U/0.jpg)](https://youtu.be/Yma74Jno97U)
 
 
 ## Tech Stack
@@ -53,14 +54,16 @@ This project helped me get more comfortable with core React concepts like:
 It also pushed me to think more like a product builder. I had to decide who the app was for and what training range it should support. I wanted to keep the output simple but still useful without pretending it could handle every type of runner. Because of that, I narrowed the scope to runners with weekly mileage between 8 and 45 miles per week.
 
 
-## Screenshots
-**Home**
+## Home
+
 ![Home](docs/home.png)
 
-**Generated Plan**
+## Generated Plan
+
 ![Generated Plan](docs/generated_plan.png)
 
-**Saved Plan**
+## Saved Plan
+
 ![Saved Plan](docs/saved_plans.png)
 
 
@@ -84,9 +87,9 @@ It also pushed me to think more like a product builder. I had to decide who the 
    cd pacepilot-io
    ```
 3. **Install project requirements**
-  ```bash
-  npm install
-  ```
+   ```bash
+   npm install
+   ```
 
 4. **Start the app**
     ```bash

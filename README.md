@@ -6,8 +6,6 @@ I made this project for beginner and intermediate recreational runners who want 
 
 After running cross country and track in college, I know how valuable structure can be. But I also know that most people do not need an elite training plan. They need something approachable that helps them rebuild consistency and confidence so I built PacePilot around that idea. I have taken plenty of breaks from running myself, so I used the kind of structure I would follow to rebuild fitness and translated that thinking into app logic.
 
-PacePilot is best designed for runners training between 8 and 45 miles per week. It is meant to give users a realistic starting point for rebuilding endurance and routine.
-
 ## Visit deployed app below!
 
 https://pacepilot-io.onrender.com/  

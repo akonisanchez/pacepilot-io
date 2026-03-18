@@ -245,3 +245,25 @@ body {
   font-weight: 600;
   color: #111827;
 }
+
+.toggle-explanation-button {
+  margin-top: 0.6rem;
+  padding: 0;
+  border: none;
+  background: none;
+  color: #3730a3;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
+
+.toggle-explanation-button:hover {
+  text-decoration: underline;
+}
+
+.workout-explanation {
+  margin-top: 0.6rem;
+  line-height: 1.6;
+  color: #4b5563;
+}

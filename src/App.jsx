@@ -13,6 +13,26 @@ function App() {
   const [expandedWorkoutIds, setExpandedWorkoutIds] = useState([]);
 
   /*
+    Takes weekly mileage and returns run day counts that PacePilot
+    supports.
+  */
+  function getSupportedRunDaysForMileage(weeklyMileage) {
+  if (weeklyMileage <= 15) {
+    return [3, 4];
+  }
+
+  if (weeklyMileage <= 25) {
+    return [3, 4, 5];
+  }
+
+  if (weeklyMileage <= 35) {
+    return [4, 5, 6];
+  }
+
+  return [5, 6];
+}
+
+  /*
     Initialize savedPlans from localStorage one time
     when the component first loads.
   */
@@ -40,6 +60,8 @@ function App() {
   */
   function handleGeneratePlan(formData) {
     const weeklyMileage = Number(formData.weeklyMileage);
+    const runDays = Number(formData.runDays);
+    const supportedRunDays = getSupportedRunDaysForMileage(weeklyMileage);
 
     setSubmittedPlanData(formData);
     setSaveMessage('');
@@ -56,6 +78,14 @@ function App() {
       setGeneratedPlan([]);
       setGenerationMessage(
         `PacePilot currently works best between ${MIN_SUPPORTED_MILEAGE} and ${MAX_SUPPORTED_MILEAGE} weekly miles. Please enter at least ${MIN_SUPPORTED_MILEAGE} weekly miles to generate a plan.`
+      );
+      return;
+    }
+
+    if (!supportedRunDays.includes(runDays)) {
+      setGeneratedPlan([]);
+      setGenerationMessage(
+        `For ${weeklyMileage} weekly miles, PacePilot currently supports ${supportedRunDays.join(' or ')} run days per week. Please adjust your run days to generate a plan.`
       );
       return;
     }

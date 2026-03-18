@@ -10,6 +10,7 @@ function App() {
   const [generatedPlan, setGeneratedPlan] = useState([]);
   const [saveMessage, setSaveMessage] = useState('');
   const [generationMessage, setGenerationMessage] = useState('');
+  const [expandedWorkoutIds, setExpandedWorkoutIds] = useState([]);
 
   /*
     Initialize savedPlans from localStorage one time
@@ -104,6 +105,20 @@ function App() {
   }
 
   /*
+    If workout explanation is open, closes it once clicked.
+    If closed, clicking will open.
+  */
+  function toggleWorkoutExplanation(explanationId) {
+    setExpandedWorkoutIds((previousExpandedIds) => {
+      if (previousExpandedIds.includes(explanationId)) {
+        return previousExpandedIds.filter((id) => id !== explanationId);
+      }
+
+      return [...previousExpandedIds, explanationId];
+    });
+  }
+
+  /*
     Remove a saved plan by id.
   */
   function handleDeletePlan(planId) {
@@ -149,14 +164,37 @@ function App() {
             {generatedPlan.map((run, index) => (
               <li key={`${run.type}-${index}`}>
                 <strong>{run.type}:</strong> {run.miles} miles
+
                 {run.workoutLabel && (
                   <>
                     <br />
                     <span className="workout-label">{run.workoutLabel}</span>
                   </>
                 )}
+
                 <br />
                 <span>{run.notes}</span>
+
+                {run.workoutExplanation && (
+                  <>
+                    <br />
+                    <button
+                      type="button"
+                      className="toggle-explanation-button"
+                      onClick={() => toggleWorkoutExplanation(`generated-${index}`)}
+                    >
+                      {expandedWorkoutIds.includes(`generated-${index}`)
+                        ? 'Hide workout explanation'
+                        : 'How this workout works'}
+                    </button>
+
+                    {expandedWorkoutIds.includes(`generated-${index}`) && (
+                      <p className="workout-explanation">
+                        {run.workoutExplanation}
+                      </p>
+                    )}
+                  </>
+                )}
               </li>
             ))}
           </ul>
@@ -193,14 +231,39 @@ function App() {
                 {plan.runs.map((run, index) => (
                   <li key={`${plan.id}-${run.type}-${index}`}>
                     <strong>{run.type}:</strong> {run.miles} miles
+
                     {run.workoutLabel && (
                       <>
                         <br />
                         <span className="workout-label">{run.workoutLabel}</span>
                       </>
                     )}
+
                     <br />
                     <span>{run.notes}</span>
+
+                    {run.workoutExplanation && (
+                      <>
+                        <br />
+                        <button
+                          type="button"
+                          className="toggle-explanation-button"
+                          onClick={() =>
+                            toggleWorkoutExplanation(`${plan.id}-${index}`)
+                          }
+                        >
+                          {expandedWorkoutIds.includes(`${plan.id}-${index}`)
+                            ? 'Hide workout explanation'
+                            : 'How this workout works'}
+                        </button>
+
+                        {expandedWorkoutIds.includes(`${plan.id}-${index}`) && (
+                          <p className="workout-explanation">
+                            {run.workoutExplanation}
+                          </p>
+                        )}
+                      </>
+                    )}
                   </li>
                 ))}
               </ul>

@@ -276,6 +276,7 @@ function decorateRunWithWorkout(run, formData) {
       type: 'Steady Run',
       notes: 'Controlled aerobic effort. Keep this comfortably hard, not all out.',
       workoutLabel: null,
+      workoutExplanation: null,
     };
   }
 
@@ -287,6 +288,7 @@ function decorateRunWithWorkout(run, formData) {
       type: 'Steady Run',
       notes: 'Controlled aerobic effort. Keep this comfortably hard, not all out.',
       workoutLabel: null,
+      workoutExplanation: null,
     };
   }
 
@@ -295,6 +297,7 @@ function decorateRunWithWorkout(run, formData) {
   return {
     ...run,
     workoutLabel: selectedWorkout.label,
+    workoutExplanation: selectedWorkout.explanation,
     notes: formatWorkoutDescription(selectedWorkout, run.miles),
   };
 }

@@ -1,3 +1,20 @@
+:root {
+  --color-bg: #f3f4f6;
+  --color-surface: #ffffff;
+  --color-text-strong: #111827;
+  --color-text-base: #1f2937;
+  --color-text-muted: #4b5563;
+  --color-text-light: #6b7280;
+  --color-text-soft: #374151;
+  --color-border: #d1d5db;
+  --color-border-light: #e5e7eb;
+  --color-accent: #3730a3;
+  --color-accent-bg: #eef2ff;
+  --color-results-bg: #fafafa;
+  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* Base reset */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -6,22 +23,39 @@
 
 body {
   font-family: Arial, sans-serif;
-  background-color: #f3f4f6;
-  color: #1f2937;
+  background-color: var(--color-bg);
+  color: var(--color-text-base);
+  line-height: 1.5;
 }
 
+/* App layout */
 .app {
   min-height: 100vh;
   padding: 2.5rem 1.25rem 4rem;
 }
 
-.hero {
+/* Shared card layout */
+.hero,
+.form-card,
+.results-card,
+.saved-plans-card {
   max-width: 760px;
   margin: 0 auto;
-  padding: 2.25rem;
-  background-color: white;
+  padding: 2rem;
+  background-color: var(--color-surface);
   border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-card);
+}
+
+.form-card,
+.results-card,
+.saved-plans-card {
+  margin-top: 1.5rem;
+}
+
+/* Hero */
+.hero {
+  padding: 2.25rem;
 }
 
 .hero h1 {
@@ -34,14 +68,14 @@ body {
   font-size: 1.1rem;
   font-weight: 600;
   line-height: 1.5;
-  color: #111827;
+  color: var(--color-text-strong);
 }
 
 .hero-description {
   margin-top: 0.75rem;
   font-size: 1rem;
   line-height: 1.6;
-  color: #4b5563;
+  color: var(--color-text-muted);
 }
 
 .hero-badge-row {
@@ -55,30 +89,22 @@ body {
   display: inline-block;
   padding: 0.4rem 0.7rem;
   border-radius: 999px;
-  background-color: #eef2ff;
-  color: #3730a3;
+  background-color: var(--color-accent-bg);
+  color: var(--color-accent);
   font-size: 0.85rem;
   font-weight: 600;
 }
 
-.form-card,
-.results-card,
-.saved-plans-card {
-  max-width: 760px;
-  margin: 1.5rem auto 0;
-  padding: 2rem;
-  background-color: white;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-}
-
+/* Section headings */
 .form-card h2,
 .results-card h2,
 .saved-plans-card h2 {
   margin-bottom: 1rem;
   font-size: 1.35rem;
+  color: var(--color-text-strong);
 }
 
+/* Form */
 .plan-form {
   display: flex;
   flex-direction: column;
@@ -86,23 +112,23 @@ body {
 }
 
 .plan-form label {
-  font-weight: 600;
   margin-top: 0.5rem;
-}
-
-.plan-form input,
-.plan-form select,
-.plan-form button {
-  font: inherit;
-  padding: 0.75rem;
-  border-radius: 8px;
+  font-weight: 600;
+  color: var(--color-text-strong);
 }
 
 .plan-form input,
 .plan-form select {
-  border: 1px solid #d1d5db;
+  width: 100%;
+  font: inherit;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background-color: var(--color-surface);
+  color: var(--color-text-base);
 }
 
+/* Buttons */
 .plan-form button,
 .save-button,
 .delete-button {
@@ -116,13 +142,13 @@ body {
 
 .plan-form button,
 .save-button {
-  background-color: #111827;
-  color: white;
+  background-color: var(--color-text-strong);
+  color: var(--color-surface);
 }
 
 .delete-button {
-  background-color: #e5e7eb;
-  color: #111827;
+  background-color: var(--color-border-light);
+  color: var(--color-text-strong);
 }
 
 .plan-form button:hover,
@@ -131,7 +157,24 @@ body {
   opacity: 0.92;
 }
 
-.results-card ul {
+.save-button {
+  margin-top: 1rem;
+}
+
+/* Focus states */
+.plan-form input:focus-visible,
+.plan-form select:focus-visible,
+.plan-form button:focus-visible,
+.save-button:focus-visible,
+.delete-button:focus-visible,
+.toggle-explanation-button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Generated results */
+.results-card ul,
+.saved-plan-item ul {
   list-style: none;
   padding-left: 0;
 }
@@ -139,80 +182,40 @@ body {
 .results-card li {
   margin-bottom: 1rem;
   padding: 0.75rem;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-border-light);
   border-radius: 8px;
-  background-color: #fafafa;
+  background-color: var(--color-results-bg);
 }
 
 .results-card span {
   display: inline-block;
   margin-top: 0.35rem;
-  color: #4b5563;
+  color: var(--color-text-muted);
 }
 
-.save-button,
-.delete-button {
-  font: inherit;
-  padding: 0.75rem 1rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.save-button {
-  margin-top: 1rem;
-  background-color: #111827;
-  color: white;
-}
-
-.save-button:hover,
-.delete-button:hover {
-  opacity: 0.92;
-}
-
-.saved-plans-card {
-  max-width: 700px;
-  margin: 1.5rem auto 0;
-  padding: 2rem;
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-.saved-plans-card h2 {
-  margin-bottom: 1rem;
-}
-
+/* Saved plans */
 .saved-plan-item {
   padding: 1rem 0;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--color-border-light);
 }
 
 .saved-plan-item:first-of-type {
-  border-top: none;
   padding-top: 0;
+  border-top: none;
 }
 
 .saved-plan-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   gap: 1rem;
   margin-bottom: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .saved-plan-header h3 {
   font-size: 1rem;
-}
-
-.delete-button {
-  background-color: #e5e7eb;
-  color: #111827;
-}
-
-.saved-plan-item ul {
-  list-style: none;
-  padding-left: 0;
+  color: var(--color-text-strong);
 }
 
 .saved-plan-item li {
@@ -220,30 +223,31 @@ body {
   line-height: 1.5;
 }
 
-.save-message {
-  margin-top: 0.75rem;
-  font-size: 0.95rem;
-  color: #374151;
-}
-
+/* Supporting text */
 .field-help-text {
   margin-top: -0.25rem;
   margin-bottom: 0.5rem;
   font-size: 0.9rem;
   line-height: 1.4;
-  color: #6b7280;
+  color: var(--color-text-light);
 }
 
-.generation-message {
+.generation-message,
+.save-message {
   line-height: 1.5;
-  color: #374151;
+  color: var(--color-text-soft);
+}
+
+.save-message {
+  margin-top: 0.75rem;
+  font-size: 0.95rem;
 }
 
 .workout-label {
   display: inline-block;
   margin-top: 0.35rem;
   font-weight: 600;
-  color: #111827;
+  color: var(--color-text-strong);
 }
 
 .toggle-explanation-button {
@@ -251,7 +255,7 @@ body {
   padding: 0;
   border: none;
   background: none;
-  color: #3730a3;
+  color: var(--color-accent);
   font: inherit;
   font-weight: 600;
   cursor: pointer;
@@ -265,5 +269,23 @@ body {
 .workout-explanation {
   margin-top: 0.6rem;
   line-height: 1.6;
-  color: #4b5563;
+  color: var(--color-text-muted);
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .app {
+    padding: 1.5rem 1rem 3rem;
+  }
+
+  .hero,
+  .form-card,
+  .results-card,
+  .saved-plans-card {
+    padding: 1.25rem;
+  }
+
+  .hero h1 {
+    font-size: 1.8rem;
+  }
 }

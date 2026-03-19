@@ -1,22 +1,13 @@
 import { useEffect, useState } from 'react';
 import PlanForm from './components/PlanForm';
+import RunList from './components/RunList';
+import SavedPlanCard from './components/SavedPlanCard';
 import generatePlan from './utils/generatePlan';
 
 const MIN_SUPPORTED_MILEAGE = 8;
 const MAX_SUPPORTED_MILEAGE = 45;
 
-function App() {
-  const [submittedPlanData, setSubmittedPlanData] = useState(null);
-  const [generatedPlan, setGeneratedPlan] = useState([]);
-  const [saveMessage, setSaveMessage] = useState('');
-  const [generationMessage, setGenerationMessage] = useState('');
-  const [expandedWorkoutIds, setExpandedWorkoutIds] = useState([]);
-
-  /*
-    Takes weekly mileage and returns run day counts that PacePilot
-    supports.
-  */
-  function getSupportedRunDaysForMileage(weeklyMileage) {
+function getSupportedRunDaysForMileage(weeklyMileage) {
   if (weeklyMileage <= 15) {
     return [3, 4];
   }
@@ -32,10 +23,13 @@ function App() {
   return [5, 6];
 }
 
-  /*
-    Initialize savedPlans from localStorage one time
-    when the component first loads.
-  */
+function App() {
+  const [submittedPlanData, setSubmittedPlanData] = useState(null);
+  const [generatedPlan, setGeneratedPlan] = useState([]);
+  const [saveMessage, setSaveMessage] = useState('');
+  const [generationMessage, setGenerationMessage] = useState('');
+  const [expandedWorkoutIds, setExpandedWorkoutIds] = useState([]);
+
   const [savedPlans, setSavedPlans] = useState(() => {
     const storedPlans = localStorage.getItem('pacepilot-saved-plans');
 
@@ -43,21 +37,17 @@ function App() {
       return [];
     }
 
-    return JSON.parse(storedPlans);
+    try {
+      return JSON.parse(storedPlans);
+    } catch {
+      return [];
+    }
   });
 
-  /*
-    Save the current savedPlans array to localStorage
-    whenever savedPlans changes.
-  */
   useEffect(() => {
     localStorage.setItem('pacepilot-saved-plans', JSON.stringify(savedPlans));
   }, [savedPlans]);
 
-  /*
-    Generate a plan only if the user's mileage is within
-    the supported recreational range for PacePilot.
-  */
   function handleGeneratePlan(formData) {
     const weeklyMileage = Number(formData.weeklyMileage);
     const runDays = Number(formData.runDays);
@@ -96,10 +86,6 @@ function App() {
     setGeneratedPlan(newPlan);
   }
 
-  /*
-    Save the currently generated plan and its input settings
-    into the savedPlans state array.
-  */
   function handleSavePlan() {
     if (!submittedPlanData || generatedPlan.length === 0) {
       return;
@@ -134,10 +120,6 @@ function App() {
     setSaveMessage('Plan saved successfully.');
   }
 
-  /*
-    If workout explanation is open, closes it once clicked.
-    If closed, clicking will open.
-  */
   function toggleWorkoutExplanation(explanationId) {
     setExpandedWorkoutIds((previousExpandedIds) => {
       if (previousExpandedIds.includes(explanationId)) {
@@ -148,9 +130,6 @@ function App() {
     });
   }
 
-  /*
-    Remove a saved plan by id.
-  */
   function handleDeletePlan(planId) {
     setSavedPlans((previousSavedPlans) =>
       previousSavedPlans.filter((plan) => plan.id !== planId)
@@ -190,46 +169,14 @@ function App() {
         <section className="results-card">
           <h2>Your Weekly Plan</h2>
 
-          <ul>
-            {generatedPlan.map((run, index) => (
-              <li key={`${run.type}-${index}`}>
-                <strong>{run.type}:</strong> {run.miles} miles
+          <RunList
+            runs={generatedPlan}
+            expandedWorkoutIds={expandedWorkoutIds}
+            onToggleExplanation={toggleWorkoutExplanation}
+            idPrefix="generated"
+          />
 
-                {run.workoutLabel && (
-                  <>
-                    <br />
-                    <span className="workout-label">{run.workoutLabel}</span>
-                  </>
-                )}
-
-                <br />
-                <span>{run.notes}</span>
-
-                {run.workoutExplanation && (
-                  <>
-                    <br />
-                    <button
-                      type="button"
-                      className="toggle-explanation-button"
-                      onClick={() => toggleWorkoutExplanation(`generated-${index}`)}
-                    >
-                      {expandedWorkoutIds.includes(`generated-${index}`)
-                        ? 'Hide workout explanation'
-                        : 'How this workout works'}
-                    </button>
-
-                    {expandedWorkoutIds.includes(`generated-${index}`) && (
-                      <p className="workout-explanation">
-                        {run.workoutExplanation}
-                      </p>
-                    )}
-                  </>
-                )}
-              </li>
-            ))}
-          </ul>
-
-          <button className="save-button" onClick={handleSavePlan}>
+          <button type="button" className="save-button" onClick={handleSavePlan}>
             Save Plan
           </button>
 
@@ -242,62 +189,13 @@ function App() {
           <h2>Saved Plans</h2>
 
           {savedPlans.map((plan) => (
-            <article key={plan.id} className="saved-plan-item">
-              <div className="saved-plan-header">
-                <h3>
-                  {plan.inputs.weeklyMileage} mi · {plan.inputs.runDays} days ·{' '}
-                  {plan.inputs.goal}
-                </h3>
-
-                <button
-                  className="delete-button"
-                  onClick={() => handleDeletePlan(plan.id)}
-                >
-                  Delete
-                </button>
-              </div>
-
-              <ul>
-                {plan.runs.map((run, index) => (
-                  <li key={`${plan.id}-${run.type}-${index}`}>
-                    <strong>{run.type}:</strong> {run.miles} miles
-
-                    {run.workoutLabel && (
-                      <>
-                        <br />
-                        <span className="workout-label">{run.workoutLabel}</span>
-                      </>
-                    )}
-
-                    <br />
-                    <span>{run.notes}</span>
-
-                    {run.workoutExplanation && (
-                      <>
-                        <br />
-                        <button
-                          type="button"
-                          className="toggle-explanation-button"
-                          onClick={() =>
-                            toggleWorkoutExplanation(`${plan.id}-${index}`)
-                          }
-                        >
-                          {expandedWorkoutIds.includes(`${plan.id}-${index}`)
-                            ? 'Hide workout explanation'
-                            : 'How this workout works'}
-                        </button>
-
-                        {expandedWorkoutIds.includes(`${plan.id}-${index}`) && (
-                          <p className="workout-explanation">
-                            {run.workoutExplanation}
-                          </p>
-                        )}
-                      </>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </article>
+            <SavedPlanCard
+              key={plan.id}
+              plan={plan}
+              expandedWorkoutIds={expandedWorkoutIds}
+              onToggleExplanation={toggleWorkoutExplanation}
+              onDeletePlan={handleDeletePlan}
+            />
           ))}
         </section>
       )}
